@@ -75,7 +75,7 @@ steps:
 ## 🧑‍💻 Author
 **Samratha Reddy**
 Python | Cloud | Distributed Systems
-[LinkedIn](https://linkedin.com/in/your-profile) | [GitHub](https://github.com/your-username)
+[LinkedIn](https://www.linkedin.com/in/samrathareddy) | [GitHub](https://github.com/samrathareddy)
 
 ## 📝 License
 This project is licensed under the MIT License.
