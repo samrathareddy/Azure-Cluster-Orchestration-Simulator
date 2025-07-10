@@ -1,0 +1,16 @@
+# azure_cluster_simulator/config/playbook.yaml
+
+cluster_name: "azure-sim-cluster-01"
+
+steps:
+  - action: "provision"
+    delay: 2
+
+  - action: "refresh"
+    delay: 3
+
+  - action: "recover"
+    delay: 2
+
+  - action: "refresh"
+    delay: 1
