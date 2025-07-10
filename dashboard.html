@@ -7,10 +7,13 @@
         h1 { color: #2c3e50; }
         button, select { padding: 10px 20px; margin: 10px 0; font-size: 16px; }
         pre { background-color: #fff; padding: 10px; border: 1px solid #ccc; overflow-x: auto; }
+        canvas { background-color: #fff; border: 1px solid #ccc; }
         .section { margin-bottom: 30px; }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         let selectedCluster = "east";
+        let chart;
 
         async function runOrchestration() {
             const res = await fetch(`/run?cluster=${selectedCluster}`, { method: 'POST' });
@@ -26,14 +29,59 @@
 
         async function fetchLogs() {
             const res = await fetch(`/logs?cluster=${selectedCluster}`);
-            const data = await res.json();
-            document.getElementById('logsOutput').textContent = JSON.stringify(data, null, 2);
+            const logs = await res.json();
+            document.getElementById('logsOutput').textContent = JSON.stringify(logs, null, 2);
+            updateChart(logs);
         }
 
         function updateCluster() {
             selectedCluster = document.getElementById("clusterSelect").value;
             fetchStatus();
             fetchLogs();
+        }
+
+        function updateChart(logs) {
+            const counts = {
+                provisioning_completed: 0,
+                refresh_completed: 0,
+                recovery_completed: 0
+            };
+
+            logs.forEach(log => {
+                const event = log.event;
+                if (counts.hasOwnProperty(event)) {
+                    counts[event]++;
+                }
+            });
+
+            const data = {
+                labels: Object.keys(counts),
+                datasets: [{
+                    label: 'Event Counts',
+                    data: Object.values(counts),
+                    backgroundColor: ['#3498db', '#2ecc71', '#e67e22']
+                }]
+            };
+
+            if (chart) {
+                chart.data = data;
+                chart.update();
+            } else {
+                const ctx = document.getElementById('eventChart').getContext('2d');
+                chart = new Chart(ctx, {
+                    type: 'bar',
+                    data: data,
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                precision: 0
+                            }
+                        }
+                    }
+                });
+            }
         }
 
         setInterval(() => {
@@ -65,6 +113,11 @@
     <div class="section">
         <h2>Telemetry Logs</h2>
         <pre id="logsOutput">Loading...</pre>
+    </div>
+
+    <div class="section">
+        <h2>Event Chart</h2>
+        <canvas id="eventChart" width="600" height="300"></canvas>
     </div>
 </body>
 </html>
