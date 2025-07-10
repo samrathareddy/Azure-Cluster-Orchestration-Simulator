@@ -1,0 +1,9 @@
+cluster_name: "cluster-east"
+
+steps:
+  - action: provision
+    delay: 2
+  - action: refresh
+    delay: 2
+  - action: recover
+    delay: 2
