@@ -1,0 +1,3 @@
+timestamp,cluster,event,metadata
+2025-07-09T14:01:33,cluster-west,provisioning_completed,"{'nodes': ['node-a', 'node-b']}"
+2025-07-09T14:04:10,cluster-west,recovery_completed,{}

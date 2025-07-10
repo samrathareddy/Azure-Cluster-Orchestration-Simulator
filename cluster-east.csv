@@ -1,0 +1,3 @@
+timestamp,cluster,event,metadata
+2025-07-09T13:02:45,cluster-east,provisioning_completed,"{'nodes': ['node-1', 'node-2']}"
+2025-07-09T13:05:12,cluster-east,refresh_completed,{}
