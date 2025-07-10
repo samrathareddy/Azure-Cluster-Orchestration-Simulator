@@ -1,81 +1,111 @@
 # Azure Cluster Orchestration Simulator
 
-Simulates Azure-like cluster lifecycle automation—provisioning, refreshing, and fault recovery—using Python, with concurrency control, event-driven orchestration, telemetry logging, and playbook-based execution.
+A fully-featured orchestration simulator inspired by Azure Capacity Infrastructure Services (CIS), built with Python, FastAPI, and Docker. This tool models the lifecycle of cloud clusters—provisioning, refresh, and fault recovery—with telemetry, logging, and multi-cluster support.
 
-## 🚀 Project Overview
+---
 
-This simulator models how Azure Capacity Infrastructure Services (CIS) might orchestrate backend processes to manage distributed infrastructure. It’s designed for educational and demonstrative purposes.
+## 🚀 Features
 
-### ✅ Features
-- Event-driven lifecycle orchestration
-- Cluster provisioning, refresh, and fault recovery
-- Playbook-style automation (YAML)
-- Telemetry and health logging
-- Concurrency-safe operations with async locks
-- Retry logic and fault injection
-- Modular and extensible Python codebase
+- 🔄 **Cluster Lifecycle Simulation**: Provision, refresh, and recover virtual clusters
+- 🔐 **Basic Auth Security**: Protect access to orchestration and logs using username/password
+- 📈 **Real-Time Dashboard**: Monitor orchestration flow and event counts with live Chart.js graphs
+- 🌐 **Multi-Cluster Support**: Orchestrate multiple clusters with YAML-based playbooks
+- 💾 **Persistent Logging**: Logs stored in JSON and downloadable as CSV
+- 📦 **Dockerized**: Easily deployable locally or in cloud (Render, Azure App Service, etc.)
+- 📥 **Downloadable Logs**: Export logs for any cluster via `/logs/download` API
 
-## 📁 Project Structure
+---
+
+## 🛠 Tech Stack
+
+- **Python 3.10**
+- **FastAPI**
+- **Jinja2 Templates**
+- **Chart.js**
+- **Docker**
+- **PyYAML**
+- **HTTP Basic Auth**
+- **Render Cloud Hosting (optional)**
+
+---
+
+## 🧱 Project Structure
+
 ```
-azure_cluster_simulator/
-├── main.py
-├── cluster.py
-├── orchestrator.py
-├── telemetry.py
-├── utils.py
+azure_cluster_orchestration_simulator/
+├── api.py                # FastAPI application with secured endpoints
+├── cluster.py            # Core cluster lifecycle logic
+├── orchestrator.py       # Playbook orchestration engine
+├── telemetry.py          # Persistent telemetry logger (JSON & CSV)
+├── utils.py              # Helper functions (delay, retry, locks)
+├── templates/
+│   └── dashboard.html    # Real-time UI with cluster controls
 ├── config/
-│   └── playbook.yaml
+│   ├── playbook-east.yaml
+│   └── playbook-west.yaml
+├── logs/
+│   └── cluster-east.json / .csv
+│   └── cluster-west.json / .csv
+├── Dockerfile
+├── requirements.txt
 └── README.md
 ```
 
-## ⚙️ How to Run
+---
 
-### 1. Clone the repository
-```bash
-git clone https://github.com/your-username/azure-cluster-orchestration-simulator.git
-cd azure-cluster-orchestration-simulator
-```
+## ⚙️ Usage
 
-### 2. Install dependencies (Python 3.8+)
+### 🔧 1. Clone & Install
+
 ```bash
+git clone https://github.com/samrathareddy/Azure-Cluster-Orchestration-Simulator.git
+cd Azure-Cluster-Orchestration-Simulator
 pip install -r requirements.txt
 ```
 
-> Note: Only standard libraries (`asyncio`, `yaml`, `logging`) are used. You may need to install `pyyaml`:
+### 🚀 2. Run Locally
+
 ```bash
-pip install pyyaml
+uvicorn api:app --reload
 ```
 
-### 3. Run the simulator
+Visit: `http://localhost:8000`
+
+> Username and password are configured via `.env` file:
+```
+DASHBOARD_USER=admin
+DASHBOARD_PASS=pass123
+```
+
+### 🐳 3. Docker Run
+
 ```bash
-python main.py
+docker build -t azure-cluster-sim .
+docker run -d -p 8000:8000 azure-cluster-sim
 ```
 
-## 📖 Playbook Format
-The `config/playbook.yaml` defines the cluster name and sequence of lifecycle operations:
-```yaml
-cluster_name: "azure-sim-cluster-01"
+---
 
-steps:
-  - action: "provision"
-    delay: 2
-  - action: "refresh"
-    delay: 3
-  - action: "recover"
-    delay: 2
+## 📊 Dashboard Features
+
+- ✅ Select cluster: `cluster-east` or `cluster-west`
+- ✅ Start orchestration from dropdown
+- ✅ View real-time telemetry logs
+- ✅ Chart showing provisioning, refresh, recovery counts
+- ✅ Download logs as CSV via:
+```
+/logs/download?cluster=east
 ```
 
-## 📌 Future Improvements
-- Web UI with FastAPI for real-time monitoring
-- Cluster state dashboard
-- Multi-cluster orchestration
-- Metrics export to Prometheus/Grafana
-- Docker-based simulation environments
-
-## 🧑‍💻 Author
-**Samratha Reddy**
-Python | Cloud | Distributed Systems
-[LinkedIn](https://www.linkedin.com/in/samrathareddy) | [GitHub](https://github.com/samrathareddy)
+---
 
 ## 📝 License
-This project is licensed under the MIT License.
+
+MIT License
+
+---
+
+## 👨‍💻 Author
+
+**Samratha Reddy**  
+[GitHub](https://github.com/samrathareddy)
