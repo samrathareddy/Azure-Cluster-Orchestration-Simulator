@@ -1,0 +1,9 @@
+cluster_name: "cluster-west"
+
+steps:
+  - action: provision
+    delay: 3
+  - action: refresh
+    delay: 1
+  - action: recover
+    delay: 1
