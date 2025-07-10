@@ -1,7 +1,7 @@
 # azure_cluster_simulator/api.py
 
 from fastapi import FastAPI, BackgroundTasks, Request, Depends, HTTPException, status, Query
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from orchestrator import ClusterOrchestrator
@@ -9,6 +9,8 @@ from telemetry import TelemetryLogger
 from dotenv import load_dotenv
 import os
 import secrets
+import csv
+import json
 
 load_dotenv()
 
@@ -16,8 +18,8 @@ app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 
 telemetry_loggers = {
-    "east": TelemetryLogger(),
-    "west": TelemetryLogger()
+    "east": TelemetryLogger("cluster-east"),
+    "west": TelemetryLogger("cluster-west")
 }
 
 security = HTTPBasic()
@@ -66,3 +68,26 @@ def get_logs(
     creds: HTTPBasicCredentials = Depends(authenticate)
 ):
     return telemetry_loggers[cluster].events
+
+@app.get("/logs/download")
+def download_logs(
+    cluster: str = Query("east"),
+    creds: HTTPBasicCredentials = Depends(authenticate)
+):
+    log_path = f"logs/cluster-{cluster}.json"
+    csv_path = f"logs/cluster-{cluster}.csv"
+
+    if not os.path.exists(log_path):
+        raise HTTPException(status_code=404, detail="Log file not found")
+
+    with open(log_path, 'r') as json_file:
+        logs = json.load(json_file)
+
+    if logs:
+        keys = logs[0].keys()
+        with open(csv_path, 'w', newline='') as csv_file:
+            writer = csv.DictWriter(csv_file, fieldnames=keys)
+            writer.writeheader()
+            writer.writerows(logs)
+
+    return FileResponse(path=csv_path, filename=f"{cluster}-telemetry.csv", media_type='text/csv')
